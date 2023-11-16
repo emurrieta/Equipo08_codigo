@@ -22,3 +22,4 @@ class CSV implements InterfaceCSV<CSV> {
 		return (outputCSV);
 	}
 }
+
