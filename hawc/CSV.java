@@ -1,6 +1,6 @@
 package hawc;
 
-class CSV implements InterfaceCSV<CSV> {
+public class CSV implements InterfaceCSV<CSV> {
 	public boolean inputFile(String inputPath) {
 		return (true);
 	}

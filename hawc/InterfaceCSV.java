@@ -1,6 +1,6 @@
 package hawc;
 
-interface InterfaceCSV<CSV extends InterfaceCSV> {
+public interface InterfaceCSV<CSV extends InterfaceCSV> {
 	/* 
 	 * Define la ruta del archivo CSV de entrada
 	 * Si la ruta es valida se apertura el archivo 
