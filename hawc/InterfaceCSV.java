@@ -36,4 +36,17 @@ public interface InterfaceCSV<CSV extends InterfaceCSV> {
 	 * de entrada es el segmento correspondiente.
 	 */ 
 	public CSV join (CSV[] segments, String outputPath);
+
+	/*
+	 * Retorna una cadena con el siguiente registro
+	 * en el archivo de entrada o cadena vacia si 
+	 * ya no existen registros en el archivo.
+	 */
+	public String getRecord();
+
+	/*
+	 * Guarda un registro o cadena en el archivo
+	 * CSV de salida.
+	 */
+	public void putRecord(String record);
 }
