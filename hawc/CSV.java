@@ -1,8 +1,9 @@
 package hawc;
 
 public class CSV implements InterfaceCSV<CSV> {
+	@Override
 	public boolean inputFile(String inputPath) {
-		return (true);
+		return (false);
 	}
 
 	public boolean outputFile(String outputPath) {
@@ -20,6 +21,15 @@ public class CSV implements InterfaceCSV<CSV> {
 		outputCSV.outputFile (outputPath);
 
 		return (outputCSV);
+	}
+
+	public String getRecord() { 
+		return ("");
+
+	}
+
+	public void putRecord(String record){
+
 	}
 }
 
