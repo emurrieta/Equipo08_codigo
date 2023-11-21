@@ -18,7 +18,21 @@ public class HAWCquery {
 			System.exit(0);
 		}
 
+		// Crea el manager para el control del
+		// procesamiento serial/paralelo
 		manager = new Manager();
+
+		// Inicia el procesamiento del Query del
+		// usuario.
 		manager.processQuery(args[2], csv);
+
+		// Guarda el resultado del Query en el
+		// archivo indicado
+		manager.saveQuery(args[1]);
+
+		// Recupera los tiempos de procesamiento
+		// e imprime estadisticas
+		int[] aiTimers;
+		aiTimers = manager.timers();
 	}
 }

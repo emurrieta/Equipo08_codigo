@@ -3,7 +3,7 @@ package hawc;
 public class CSV implements InterfaceCSV<CSV> {
 	@Override
 	public boolean inputFile(String inputPath) {
-		return (false);
+		return (true);
 	}
 
 	public boolean outputFile(String outputPath) {
