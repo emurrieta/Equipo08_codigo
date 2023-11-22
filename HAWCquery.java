@@ -8,7 +8,7 @@ public class HAWCquery {
 		CSV csv;
 
 		if (args.length < 3) {
-			System.out.println("Argumentos:  HAWCquery CSV_entrada CSV_salida Query");
+			System.out.println("Argumentos:  CSV_entrada CSV_salida \"Query\"");
 			System.exit(0);
 		} 
 
@@ -20,7 +20,7 @@ public class HAWCquery {
 
 		// Crea el manager para el control del
 		// procesamiento serial/paralelo
-		manager = new Manager();
+		manager = new Manager(true);
 
 		// Inicia el procesamiento del Query del
 		// usuario.

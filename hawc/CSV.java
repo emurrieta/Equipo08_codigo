@@ -11,7 +11,12 @@ public class CSV implements InterfaceCSV<CSV> {
 	}
 
 	public CSV[] split(int segments)  {
-		CSV[] csvs = new CSV[10];  
+		CSV[] csvs = new CSV[segments];  
+		for (int i=0; i<segments; i++) {
+			// Configurar cada CSV
+			csvs[i] = new CSV();
+		}
+
 		return(csvs);
 	}
 
