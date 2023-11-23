@@ -2,6 +2,8 @@ package hawc;
 
 //interface InterfaceDataFrame<DataFrame extends InterfaceDataFrame, CSV> {
 interface InterfaceDataFrame<CSV> {
+    
+    
 	/* 
 	 * Recibe una cadena con una expresion 'query' que indica
 	 * la accion a realizar con las columnas del DataFrame.
@@ -14,6 +16,7 @@ interface InterfaceDataFrame<CSV> {
 	/* 
 	 * Retorna un arreglo con los encabezados del DataFrame.
 	 */ 
+        
 	public String[] headers();
 
 	/* 
