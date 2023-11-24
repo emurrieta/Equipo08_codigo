@@ -10,7 +10,7 @@ public class Query {
     */ 
     
     
-    public boolean sintaxisQuery(String cadena) {
+    public static boolean sintaxisQuery(String cadena) {
         
         //Ejemplo: select (nombre, edad, calificacion)) ) 
         
