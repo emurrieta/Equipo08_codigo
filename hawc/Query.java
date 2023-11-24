@@ -1,6 +1,10 @@
 
 package hawc;
 
+/* 
+     * Clase de utileria para trabajar el query
+    */ 
+
 public class Query {
     
     /* 
@@ -14,8 +18,8 @@ public class Query {
         
         //Ejemplo: select (nombre, edad, calificacion)) ) 
         
-        String consulta = cadena.trim();
-        
+        String consulta = cadena.replaceAll("\\s","");
+        //String consulta = cadena.trim();
         
         //el string debe contener la subcadena select
         boolean condicion1 = consulta.contains("select");
@@ -40,5 +44,26 @@ public class Query {
   
         return condicion1 && condicion2 ;
     }
+    
+    /* 
+     * Regresa las columnas en forma de un array de Strings
+     * Es todo lo que se encuentre dentro de parentesis ()
+    */ 
+    
+    public static String[] nombreColumas( String cadena) {
+        
+        //elimina espacios en blanco en la cadena
+        cadena = cadena.replaceAll("\\s+","");
+        
+        int indiceApertura = cadena.indexOf("(");
+        int indiceCierre = cadena.indexOf(")");
+        
+        String columnasComas = cadena.substring(indiceApertura+1, indiceCierre);
+        
+        String[] vectorNombresColumas = columnasComas.split(",");
+        
+        return vectorNombresColumas;
+    }
+    
     
 }
