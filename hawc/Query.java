@@ -11,38 +11,64 @@ public class Query {
      * Regresa false si el query no cumple la sintaxis
      * Regresa true si cumple la sintaxis
      * se requiere select( nombreColumna1 , nombreColuma2,... )
+    *  
     */ 
     
     
     public static boolean sintaxisQuery(String cadena) {
         
-        //Ejemplo: select (nombre, edad, calificacion)) ) 
+        //elimina espacios en blanco antes del primer caracer y al ultimo
+        cadena = cadena.trim();
         
-        String consulta = cadena.replaceAll("\\s","");
-        //String consulta = cadena.trim();
+        String instruccionSelect = cadena.substring(0, 6);
         
-        //el string debe contener la subcadena select
-        boolean condicion1 = consulta.contains("select");
+        //verificamos que las primeras letras formen la palabra select
+        if (!instruccionSelect.contentEquals("select")) {
+            return false;
+        }
         
+        //quitamos la cadena la palabra select
+        cadena = cadena.substring(6);
+        
+        //eliminamos espacios en blanco
+        cadena = cadena.replaceAll("\\s","");
+        
+       
         //cuenta el numero de veces que aparece ) o (
-        int contador = 0;
+        int contadorParentesis = 0;
         
         //contamos el numero de veces que aparece ) o (
         for( char valor: cadena.toCharArray() ) {
             if (valor == '(' || valor== ')' ) {
-                contador++;
+                contadorParentesis++;
             }  
         }
         
         
-        boolean condicion2 = true; 
-        
         //si no es exactamente 2 entonces hay un false
-        if (  contador!= 2 ) {
-            condicion2 = false ;
+        if (  contadorParentesis!= 2 ) {
+            return false ;
+        }
+        
+        //quitamos los unicos dos parentesis
+        //ahora cadena deberia contener un string separado por comas
+        cadena = cadena.substring(1, cadena.length()-1);
+        
+        //revisamos que la cadena sin parentesis contenga algo
+        //no se puede select()
+        if (cadena.isEmpty()) {
+            return false;
+        }
+        
+        //asumimos que si el query fue select(*, col1,col2,...)
+        //entonces se piden todas las columnas y el query es
+        //sintactimente correcto. Se pide que ninguna columna se llame
+        // * o contenga ese simbolo
+        if( cadena.contains("*") ){
+            return true;
         }
   
-        return condicion1 && condicion2 ;
+        return  true;
     }
     
     /* 
