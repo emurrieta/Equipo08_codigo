@@ -10,7 +10,7 @@ public class CSV implements InterfaceCSV<CSV> {
         try {
             // Ingresar ruta de entrada del archivo 
             if (inputPath != null && !inputPath.isEmpty()) {
-                System.out.println("Ruta de entrada proporcionada: " + inputPath);
+                Utils.println("Ruta de entrada proporcionada: " + inputPath);
             } else {
                 // Solicitar al usuario que ingrese manualmente la ruta del archivo
                 try (Scanner scanner = new Scanner(System.in)) {
@@ -36,7 +36,7 @@ public class CSV implements InterfaceCSV<CSV> {
                 throw new SecurityException("No se puede escribir en el archivo de entrada debido a permisos insuficientes.");
             }
             
-            System.out.println("Archivo de entrada abierto correctamente: " + inputPath);
+            Utils.println("Archivo de entrada abierto correctamente: " + inputPath);
             return true;
 
         } catch (IllegalArgumentException | SecurityException | FileNotFoundException e) {
@@ -79,7 +79,7 @@ public boolean outputFile(String outputPath) {
             throw new SecurityException("No se puede escribir en el archivo de salida debido a permisos insuficientes.");
         }
 
-        System.out.println("Archivo de salida creado correctamente: " + outputPath);
+        Utils.println("Archivo de salida creado correctamente: " + outputPath);
         return true;
 
     } catch (IllegalArgumentException | SecurityException | IOException e) {

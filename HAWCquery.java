@@ -1,5 +1,6 @@
 import hawc.CSV;
 import hawc.Manager;
+import hawc.Utils;
 
 public class HAWCquery {
 
@@ -11,6 +12,9 @@ public class HAWCquery {
 			System.out.println("Argumentos:  CSV_entrada CSV_salida \"Query\"");
 			System.exit(0);
 		} 
+
+		// Activa/Desactiva el modo de mensajes de depuracion
+		Utils.setDebug(true);
 
 		csv = new CSV();
 		if ( !csv.inputFile(args[0]) ) {
