@@ -1,6 +1,10 @@
 
 package hawc;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
+
 /* 
      * Clase de utileria para trabajar el query
     */ 
@@ -78,6 +82,7 @@ public class Query {
     
     public static String[] nombreColumas( String cadena) {
         
+        
         //elimina espacios en blanco en la cadena
         cadena = cadena.replaceAll("\\s+","");
         
@@ -90,6 +95,32 @@ public class Query {
         
         return vectorNombresColumas;
     }
+    
+    public static int[] numeroColumnas (String[] listaNombres, String[] headers ) throws NoSuchElementException {
+            
+            //List<String> nombres = Arrays.asList( nombreCol );
+            
+            //convertimos el vector de Strings a un array para buscar en el
+            List<String> lista = Arrays.asList( headers );
+            
+            int[] indices = new int[listaNombres.length];
+            
+            int indice = 0;
+            
+            for (int i=0; i< listaNombres.length;i++) {
+                
+                indice = lista.indexOf( listaNombres[i] );
+                
+                if (indice == -1) {
+                throw new NoSuchElementException("No se encontro elemento en "
+                        + "la lista de variables de la base") ; 
+                }
+                indices[i] = indice;
+            }
+            
+            return indices;
+        }
+    
     
     
 }
