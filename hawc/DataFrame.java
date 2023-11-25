@@ -25,55 +25,55 @@ public class DataFrame implements InterfaceDataFrame<CSV> {
 	 */ 
         
 	public boolean executeQuery(String query) { 
-            
-		System.out.println("Executing Query: "+query);
-                
                 
                 int numRenglones = 500; //numero de renglones que se usaran
                 
-                String cadenaNombres = archivoEntrada.getRecord(); //obtenemos el header
-                this.colnames = cadenaNombres.split(","); //dividimos la cadena
+                String[] nombreColumnas = Query.nombreColumas(query);
                 
-                //aqui guardamos las lineas del archivo (strings)
-                ArrayList<String> arreglo = new ArrayList<>();
-                ArrayList<String> arregloSalida = new ArrayList<>();
+                int[] listaDeIndices = Query.numeroColumnas(nombreColumnas, this.colnames);
+                
+                //String cadenaNombres = archivoEntrada.getRecord(); //obtenemos el header
+                //this.colnames = cadenaNombres.split(","); //dividimos la cadena
+                
+                //aqui guardamos el conjunto de las lineas del archivo (strings)
+                //ArrayList<String> arregloEntrada = new ArrayList<>();
+                //ArrayList<String> arregloSalida = new ArrayList<>();
                 
                 //empezamos a guardar las lineas del csv en el arreglo
                 String record = archivoEntrada.getRecord();
+                
+                //recorremos el csv
                 while( !record.isEmpty() ) {
-                    arreglo.add(record);
-                    record = archivoEntrada.getRecord(); //pedimos la siguiente linea
+                    
+                    //eliminamos todos los espacions en blanco del record
+                    record = record.replaceAll("\\s","");
+                    
+                    //dividimos el record en comas
+                    String[] vectorRecord = record.split(",");
+                    
+                    //creamos el vector de salida que almacenara los campos
+                    //requeridos en el query
+                    String[] vectorSalida = new String[vectorRecord.length];
+                    
+                    //obtenemos del vector de strings vectorRecord los indices
+                    //que requerimos y que estan almacenados en el vector
+                    //listaDeIndices
+                    for(int i=0; i< vectorRecord.length;i++) {
+                        vectorSalida[i] = vectorRecord[ listaDeIndices[i] ];
+                    }
+                    
+                    //unimos las entradas del vector de salida vectorSalida en
+                    //un solo string y se lo pasamos a la funcion putRecord
+                    String recordSalida = String.join(",", vectorSalida);
+                    this.archivoSalida.putRecord(recordSalida);
+                    
+                    
+                    //volvemos a leer el siguiente record que nos proporciona
+                    //el archivo de entrada
+                    record = archivoEntrada.getRecord(); 
                 }
                 
-                //en cada entrada del arreglo de strings hacemos 
-                //aplicamos los criterios del query
-                
-                for (String valor: arreglo) {
-                    
-                    //obtenemos una linea del csv
-                    String[] linea = valor.split(",");
-                    
-                    //aplicamos el query a la linea
-                    try {
-                        System.out.println("Ejecutamos query en linea");
-                        
-                    }
-                    catch(Exception e) {
-                        System.out.println("Error al procesar query");
-                        return false; //termina la funcion
-                    }
-                    
-                    String consulta = "2,2,3,3,4,a";
-                    
-                    //guardamos la consulta al arreglo de salidas
-                    arregloSalida.add(consulta );
-                      
-                } //termina de recorrer el arreglo
-                
-                //el arreglo de salida lo descargamos en el csv de salida
-                for(String valor: arregloSalida) {
-                    archivoSalida.putRecord(  valor   );
-                } 
+                System.out.println("Executing Query: " + String.join(",", nombreColumnas) );
 		return true;       
 	} // termina executeQuery
 
@@ -117,7 +117,7 @@ public class DataFrame implements InterfaceDataFrame<CSV> {
         
         }
         
-        private int[] numeroColumnas (String[] columnas) throws NoSuchElementException {
+        private int[] numeroColumnasDF (String[] columnas) throws NoSuchElementException {
             
             List<String> nombres = Arrays.asList( this.colnames);
             int[] indices = new int[columnas.length];
