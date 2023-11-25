@@ -1,6 +1,9 @@
 package hawc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 public class DataFrame implements InterfaceDataFrame<CSV> {
     
@@ -112,5 +115,24 @@ public class DataFrame implements InterfaceDataFrame<CSV> {
             
             this.archivoSalida = csv;        
         
+        }
+        
+        private int[] numeroColumnas (String[] columnas) throws NoSuchElementException {
+            
+            List<String> nombres = Arrays.asList( this.colnames);
+            int[] indices = new int[columnas.length];
+            
+            int indice = 0;
+            
+            for (int i=0; i< columnas.length;i++) {
+                indice = nombres.indexOf( columnas[i] );
+                
+                if (indice == -1) {
+                throw new NoSuchElementException("empty list") ; 
+                }
+                indices[i] = indice;
+            }
+            
+            return indices;
         }
 }
