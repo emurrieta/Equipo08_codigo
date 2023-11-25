@@ -20,19 +20,20 @@ public class DataFrame implements InterfaceDataFrame<CSV> {
 	 * Retorna Falso si hay un error al procesar el query o
 	 * True si todo se realizo correctamente.
 	 */ 
+        
 	public boolean executeQuery(String query) { 
             
 		System.out.println("Executing Query: "+query);
                 
                 
-                int numRenglones = 50; //numero de renglones que se usaran
+                int numRenglones = 500; //numero de renglones que se usaran
                 
                 String cadenaNombres = archivoEntrada.getRecord(); //obtenemos el header
                 this.colnames = cadenaNombres.split(","); //dividimos la cadena
                 
                 //aqui guardamos las lineas del archivo (strings)
                 ArrayList<String> arreglo = new ArrayList<>();
-                 ArrayList<String> arregloSalida = new ArrayList<>();
+                ArrayList<String> arregloSalida = new ArrayList<>();
                 
                 //empezamos a guardar las lineas del csv en el arreglo
                 String record = archivoEntrada.getRecord();
@@ -78,7 +79,7 @@ public class DataFrame implements InterfaceDataFrame<CSV> {
 	 */ 
    @Override
 	public String[] headers() { 
-                 
+                
             return this.colnames;
         
         }
@@ -89,6 +90,17 @@ public class DataFrame implements InterfaceDataFrame<CSV> {
 	public void inputCSV(CSV csv) { 
             
             this.archivoEntrada = csv;
+            
+            //leemos la primera linea del csv
+            String cadena =  csv.getRecord();
+            
+            //eliminamos todos los espacios en blanco
+            cadena = cadena.replaceAll("\\s","");
+             
+            //dividimos la cadena por comas y lo asignamos a arreglo de Strings 
+            this.colnames = cadena.split(",");
+            
+      
               
         }
 
