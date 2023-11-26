@@ -3,14 +3,23 @@ package hawc;
 import java.lang.Runtime;
 import java.util.concurrent.*;
 
+/*
+ * Clase para implementar el modelo de procesamiento Manager-Worker.
+ * Es responsable de crear la cantidad determinada de Workers, asignales
+ * trabajo y esperar a que concluyan.
+ */
 public final class Manager implements InterfaceManager<CSV> {
 	private int CPUs;
 	private	DataFrame df[];
 	private CSV CSVs[];
 	private boolean parallel;
+	private long freeMemory,totalMemory; 
+	private Timer timers[];
 
 	public Manager(boolean parallel) {
 		this.CPUs = Runtime.getRuntime().availableProcessors();
+		this.freeMemory = Runtime.getRuntime().freeMemory();
+		this.totalMemory = Runtime.getRuntime().totalMemory();
 		this.parallel = parallel;
 	}
 
@@ -52,6 +61,7 @@ public final class Manager implements InterfaceManager<CSV> {
 
 		// Genera los DataFrames necesarios para el procesamiento
 	       	this.df = new DataFrame[iWorkers];
+	       	this.timers = new Timer[iWorkers];
 		for (int thread=0; thread<iWorkers; thread++) {
 			df[thread]=new DataFrame();
 			df[thread].inputCSV(CSVs[thread]);
@@ -97,7 +107,32 @@ public final class Manager implements InterfaceManager<CSV> {
 
 		return (iTimers);
 	}
+}
 
+/*
+ * Clase utilitaria para llevar el registro de los tiempos de 
+ * procesamiento consumidos por un Worker.
+ */
+final class Timer {
+	int startTime;
+	int stopTime;
+
+	protected Timer() {
+		startTime=0;
+		stopTime=0;
+	}
+
+	void start() {
+		startTime = 0;
+	}
+
+	void stop() {
+		stopTime = 0;
+	}
+
+	int elapsedTime() {
+		return (stopTime-startTime);
+	}
 }
 
 
