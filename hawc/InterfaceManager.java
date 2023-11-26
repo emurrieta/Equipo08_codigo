@@ -21,7 +21,7 @@ interface InterfaceManager<CSV> {
 	 * Retorna True si el guardado fue correcto o False en
 	 * caso contrario. 
 	 */ 
-	public boolean saveQuery(String path);
+	public boolean saveQuery(CSV csv);
 
 	/* 
 	 * Retorna las metricas del procesamiento

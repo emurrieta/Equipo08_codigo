@@ -1,6 +1,8 @@
 import hawc.CSV;
 import hawc.Manager;
 import hawc.Utils;
+import hawc.Query;
+
 
 public class HAWCquery {
 
@@ -9,16 +11,27 @@ public class HAWCquery {
 		CSV csv;
 
 		if (args.length < 3) {
-			System.out.println("Argumentos:  CSV_entrada CSV_salida \"Query\"");
+			System.err.println("Argumentos:  CSV_entrada CSV_salida \"Query\"");
 			System.exit(0);
 		} 
+		
+		if (!Query.sintaxisQuery(args[2]))
+		{
+			System.err.println("Error de sintaxis en el Query");
+			System.exit(0);
+		}
 
 		// Activa/Desactiva el modo de mensajes de depuracion
 		Utils.setDebug(false);
 
 		csv = new CSV();
 		if ( !csv.inputFile(args[0]) ) {
-			System.out.println("Error en la apertura del archivo de entrada");
+			System.err.println("Error en la apertura del archivo de entrada");
+			System.exit(0);
+		}
+
+		if ( !csv.outputFile(args[1]) ) {
+			System.err.println("Error en la apertura del archivo de salida");
 			System.exit(0);
 		}
 
@@ -32,7 +45,7 @@ public class HAWCquery {
 
 		// Guarda el resultado del Query en el
 		// archivo indicado
-		manager.saveQuery(args[1]);
+		manager.saveQuery(csv);
 
 		// Recupera los tiempos de procesamiento
 		// e imprime estadisticas

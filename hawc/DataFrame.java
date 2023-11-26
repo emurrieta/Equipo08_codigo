@@ -31,6 +31,9 @@ public class DataFrame implements InterfaceDataFrame<CSV> {
                 String[] nombreColumnas = Query.nombreColumas(query);
                 
                 int[] listaDeIndices = Query.numeroColumnas(nombreColumnas, this.colnames);
+
+		String encabezado = String.join(",",nombreColumnas);
+                this.archivoSalida.putRecord(encabezado);
                 
                 //String cadenaNombres = archivoEntrada.getRecord(); //obtenemos el header
                 //this.colnames = cadenaNombres.split(","); //dividimos la cadena
@@ -43,7 +46,8 @@ public class DataFrame implements InterfaceDataFrame<CSV> {
                 String record = archivoEntrada.getRecord();
                 
                 //recorremos el csv
-                while( !record.isEmpty() ) {
+                //while( !record.isEmpty() ) {
+                while( record != null ) {
                     
                     //eliminamos todos los espacions en blanco del record
                     record = record.replaceAll("\\s","");
@@ -53,12 +57,20 @@ public class DataFrame implements InterfaceDataFrame<CSV> {
                     
                     //creamos el vector de salida que almacenara los campos
                     //requeridos en el query
-                    String[] vectorSalida = new String[vectorRecord.length];
+		    Utils.println("DataFrame.executeQuery> vectorRecord.length"+vectorRecord.length);
+
+		    //@eml: vectorSalida no es igual en tamaño al registro leido, es igual
+		    //@eml: al tamaño de las columnas selecionadas
+                    //@eml: String[] vectorSalida = new String[vectorRecord.length];
+                    String[] vectorSalida = new String[nombreColumnas.length];
                     
                     //obtenemos del vector de strings vectorRecord los indices
                     //que requerimos y que estan almacenados en el vector
                     //listaDeIndices
-                    for(int i=0; i< vectorRecord.length;i++) {
+		    //@eml: El ciclo es sólo para el total de columnas seleccionadas
+		    //@eml: no sobre el total de columnas en el registro
+                    //@eml: for(int i=0; i< vectorRecord.length;i++) {
+                    for(int i=0; i< vectorSalida.length;i++) {
                         vectorSalida[i] = vectorRecord[ listaDeIndices[i] ];
                     }
                     
@@ -73,7 +85,7 @@ public class DataFrame implements InterfaceDataFrame<CSV> {
                     record = archivoEntrada.getRecord(); 
                 }
                 
-                System.out.println("Executing Query: " + String.join(",", nombreColumnas) );
+                //System.out.println("Executing Query: " + String.join(",", nombreColumnas) );
 		return true;       
 	} // termina executeQuery
 

@@ -1,5 +1,6 @@
 package hawc;
 import java.io.*;
+import java.nio.file.*;
 import java.util.Scanner;
 
 public class CSV implements InterfaceCSV<CSV> {
@@ -7,6 +8,7 @@ public class CSV implements InterfaceCSV<CSV> {
     private BufferedWriter writer;
     private String inputFilePath;
     private String outputFilePath;
+    private Path tmpDir;
     
     /* 
      * Define la ruta del archivo CSV de entrada
@@ -86,7 +88,8 @@ public class CSV implements InterfaceCSV<CSV> {
 
         // Verificar si el archivo en la ruta de salida ya existe
         if (outputFile.exists()) {
-            throw new IllegalArgumentException("El archivo de salida ya existe. Proporciona una ruta de salida válida.");
+	    Files.deleteIfExists(Paths.get(outputPath));
+            //throw new IllegalArgumentException("El archivo de salida ya existe. Proporciona una ruta de salida válida.");
         }
 
         // Crear el archivo de salida
@@ -129,16 +132,32 @@ public class CSV implements InterfaceCSV<CSV> {
         // Crear la matriz para almacenar los segmentos
         CSV[] segmentArray = new CSV[segments];
 
+	// Crea el directorio temporal para el procesamiento segmentado
+	tmpDir = Utils.createTmpDir();
+	String subdirSymbol = FileSystems.getDefault().getSeparator();
+
         // Crear un nuevo objeto CSV para cada segmento
         for (int i = 0; i < segments; i++) {
             segmentArray[i] = new CSV();
-            segmentArray[i].inputFilePath = this.inputFilePath;
-            segmentArray[i].outputFilePath = this.outputFilePath.replace(".csv", "_segment" + i + ".csv");
-            segmentArray[i].reader = new BufferedReader(new FileReader(segmentArray[i].inputFilePath));
-            segmentArray[i].writer = new BufferedWriter(new FileWriter(segmentArray[i].outputFilePath));
+            segmentArray[i].inputFilePath  = tmpDir.toString()+subdirSymbol+"input."+i+".csv";
+            segmentArray[i].outputFilePath = tmpDir.toString()+subdirSymbol+"output."+i+".csv";
+	    // El archivo de entrada no existe en este punto
+            //segmentArray[i].reader = new BufferedReader(new FileReader(segmentArray[i].inputFilePath));
+	    // Al inicio el archivo de salida debe ser el mismo archivo de entrada ya que hay que llenarlo
+            segmentArray[i].writer = new BufferedWriter(new FileWriter(segmentArray[i].inputFilePath));
         }
 
         int currentSegment = 0;
+
+	// Obtenemos la primer linea del CSV de entrada que corresponde con el encabezado
+	this.reader.mark(0);
+	this.reader.reset();
+	String header=getRecord();
+
+	// Escribimos el encabezado en todos los segmentos
+	for (CSV segment : segmentArray) {
+		segment.putRecord(header);
+	}
 
         // Leer y escribir filas en los segmentos de forma cíclica
         String record;
@@ -147,10 +166,15 @@ public class CSV implements InterfaceCSV<CSV> {
             currentSegment = (currentSegment + 1) % segments;
         }
 
-        // Cerrar lectores y escritores de todos los segmentos
+        // Cerrar los escritores de todos los segmentos
         for (CSV segment : segmentArray) {
-            segment.reader.close();
             segment.writer.close();
+        }
+
+	// Reabrimos los archivos de entrada y salida 
+        for (int i = 0; i < segments; i++) {
+            segmentArray[i].reader = new BufferedReader(new FileReader(segmentArray[i].inputFilePath));
+            segmentArray[i].writer = new BufferedWriter(new FileWriter(segmentArray[i].outputFilePath));
         }
 
         Utils.println("Archivo dividido en " + segments + " segmentos.");
@@ -172,7 +196,7 @@ public class CSV implements InterfaceCSV<CSV> {
      */      
          
      @Override
-         public CSV join(CSV[] segments, String outputPath) {
+         public CSV join(CSV[] segments) {
                try {
             // Verificar los segmentos y que no están vacíos
             if (segments == null || segments.length == 0) {
@@ -180,43 +204,41 @@ public class CSV implements InterfaceCSV<CSV> {
             }
 
             // Verificar si la ruta de salida es proporcionada
-            if (outputPath == null || outputPath.isEmpty()) {
+            if (this.outputFilePath == null || this.outputFilePath.isEmpty()) {
                 throw new IllegalArgumentException("La ruta de salida no puede ser nula o vacía.");
             }
 
-            // Crear un nuevo objeto CSV para el archivo de salida combinado
-            CSV combinedCSV = new CSV();
 
-            // Asignar la ruta de entrada como la primera ruta de segmento
-            combinedCSV.inputFilePath = segments[0].inputFilePath;
-
-            // Asignar la ruta de salida proporcionada
-            combinedCSV.outputFilePath = outputPath;
-
-            // Escribe los datos en el nuevo Csv
-            combinedCSV.writer = new BufferedWriter(new FileWriter(combinedCSV.outputFilePath));
-
-            // Unir los segmentos en el archivo de salida combinado
+	    String header="";
             for (CSV segment : segments) {
                 // Crear el lector para el segmento  
                 segment.reader = new BufferedReader(new FileReader(segment.outputFilePath));
+		// Eliminamos del buffer la primera linea que corresponde con el encabezado
+		header=segment.getRecord();
+	    }
 
+            this.putRecord(header);
+
+            // Unir los segmentos en el archivo de salida combinado
+            for (CSV segment : segments) {
                 // Leer y escribir cada registro del segmento
                 String record = segment.getRecord();
                 while (record != null) {
-                    combinedCSV.putRecord(record);
+                    this.putRecord(record);
                     record = segment.getRecord();
                 }
-
                 // Cerrar el lector del segmento actual
                 segment.reader.close();
             }
 
             // Cerrar el escritor para el archivo de salida combinado
-            combinedCSV.writer.close();
+            this.writer.close();
 
-            Utils.println("Archivos combinados correctamente en: " + combinedCSV.outputFilePath);
-            return combinedCSV;
+	    // Se eliminan los archivos temporales
+	    Utils.deleteTmpDir(tmpDir);
+
+            Utils.println("Archivos combinados correctamente en: " + this.outputFilePath);
+            return this;
 
         } catch (IOException e) {
             System.err.println("Error al realizar la unión de archivos: " + e.getMessage());

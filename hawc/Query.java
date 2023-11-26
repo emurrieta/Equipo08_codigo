@@ -102,7 +102,9 @@ public class Query {
             
             //convertimos el vector de Strings a un array para buscar en el
             List<String> lista = Arrays.asList( headers );
-            
+            //@eml: lista->encabezados
+
+	    //@eml: listaNombres->seleccionColumnas
             int[] indices = new int[listaNombres.length];
             
             int indice = 0;
@@ -116,6 +118,7 @@ public class Query {
                         + "la lista de variables de la base") ; 
                 }
                 indices[i] = indice;
+		Utils.println("Utils.numeroColumnas>"+"listaNombres[i]="+listaNombres[i]+" indice="+indice+" headers[indice]="+lista.get(indice));
             }
             
             return indices;

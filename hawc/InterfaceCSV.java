@@ -35,7 +35,8 @@ public interface InterfaceCSV<CSV extends InterfaceCSV> {
 	 * 'segments' elementos en los que el archivo
 	 * de entrada es el segmento correspondiente.
 	 */ 
-	public CSV join (CSV[] segments, String outputPath);
+	//public CSV join (CSV[] segments, String outputPath);
+	public CSV join (CSV[] segments);
 
 	/*
 	 * Retorna una cadena con el siguiente registro

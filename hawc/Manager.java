@@ -2,6 +2,8 @@ package hawc;
 
 import java.lang.Runtime;
 import java.util.concurrent.*;
+import java.nio.file.*;
+import java.io.*;
 
 /*
  * Clase para implementar el modelo de procesamiento Manager-Worker.
@@ -15,6 +17,7 @@ public final class Manager implements InterfaceManager<CSV> {
 	private boolean parallel;
 	private long freeMemory,totalMemory; 
 	private Timer timers[];
+	Path tmpDir;
 
 	public Manager(boolean parallel) {
 		this.CPUs = Runtime.getRuntime().availableProcessors();
@@ -46,16 +49,16 @@ public final class Manager implements InterfaceManager<CSV> {
 		// Determina si el trabajo se realiza en paralelo o
 		// en serie
 		if (this.parallel) 
-			iWorkers = this.CPUs;
+			iWorkers = this.CPUs*4;
 		else
 			iWorkers = 1;
 
-
 		// Divide el CSV de entrada en fracciones
 		this.CSVs = new CSV[iWorkers];
-		if (parallel) 
+		if (parallel) {
+			System.out.println("Segmentando el archivo de entrada...");
 			CSVs = csv.split(iWorkers);
-		else {
+		} else {
 			CSVs[0] = csv;
 		}
 
@@ -65,6 +68,7 @@ public final class Manager implements InterfaceManager<CSV> {
 		for (int thread=0; thread<iWorkers; thread++) {
 			df[thread]=new DataFrame();
 			df[thread].inputCSV(CSVs[thread]);
+			//@eml: hay que simplificar, creo que basta con definir un CSV
 			df[thread].outputCSV(CSVs[thread]);
 		}
 
@@ -73,6 +77,7 @@ public final class Manager implements InterfaceManager<CSV> {
 
 		// Inicia la ejecucion de los hilos con un Worker
 		// que recibe el DataFrame a usar y el query a procesar.
+		System.out.println("Procesando el archivo...");
 		for (int thread=0; thread<iWorkers; thread++)
 			poolDataFrames.execute (new Worker(query,this.df[thread]));
 
@@ -83,6 +88,8 @@ public final class Manager implements InterfaceManager<CSV> {
 			} catch (InterruptedException e) { 
 			}
 		}
+		System.out.println("Procesamiento concluido");
+
 
 		return (true);
 	}
@@ -93,7 +100,10 @@ public final class Manager implements InterfaceManager<CSV> {
 	 * caso contrario. 
 	 */ 
 	@Override
-	public boolean saveQuery(String path) {
+	public boolean saveQuery(CSV csv) {
+		System.out.println("Integrando el archivo de salida...");
+		if (this.parallel) 
+			csv.join(CSVs);
 		return (true);
 	}
 
@@ -153,10 +163,9 @@ final class Worker implements Runnable {
 
 	@Override
 	public void run() {
-		 try { 
+		 //try { 
 			 dataFrame.executeQuery(strQuery);
-			 Thread.sleep(10000); 
-		 } catch (InterruptedException e) { 
-		 }
+		 //} catch (InterruptedException e) { 
+		 //}
 	}
 }
