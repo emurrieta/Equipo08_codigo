@@ -14,7 +14,7 @@ public class HAWCquery {
 		} 
 
 		// Activa/Desactiva el modo de mensajes de depuracion
-		Utils.setDebug(true);
+		Utils.setDebug(false);
 
 		csv = new CSV();
 		if ( !csv.inputFile(args[0]) ) {
