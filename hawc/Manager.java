@@ -16,14 +16,20 @@ public final class Manager implements InterfaceManager<CSV> {
 	private CSV CSVs[];
 	private boolean parallel;
 	private long freeMemory,totalMemory; 
-	private Timer timers[];
+	private StopWatch timers[];
 	Path tmpDir;
 
-	public Manager(boolean parallel) {
-		this.CPUs = Runtime.getRuntime().availableProcessors();
+	public Manager(int CPUs) {
 		this.freeMemory = Runtime.getRuntime().freeMemory();
 		this.totalMemory = Runtime.getRuntime().totalMemory();
-		this.parallel = parallel;
+		if (CPUs==0) 
+			this.CPUs = Runtime.getRuntime().availableProcessors()*4;
+		else
+			this.CPUs = CPUs;
+		this.parallel = this.CPUs>1? true: false;
+
+		timers = new StopWatch[3];
+		for (int i=0; i<3; i++) timers[i]=new StopWatch();
 	}
 
 	/* 
@@ -46,29 +52,28 @@ public final class Manager implements InterfaceManager<CSV> {
 	public boolean processQuery(String query,CSV csv) {
 		int iWorkers;
 
-		// Determina si el trabajo se realiza en paralelo o
-		// en serie
+		iWorkers=this.CPUs;
 		if (this.parallel) 
-			iWorkers = this.CPUs*4;
+			Utils.println("Paralelo con "+iWorkers+ " hilos");
 		else
-			iWorkers = 1;
+			Utils.println("Serial con "+iWorkers+ " hilos");
 
 		// Divide el CSV de entrada en fracciones
 		this.CSVs = new CSV[iWorkers];
+		timers[0].start();
 		if (parallel) {
 			System.out.println("Segmentando el archivo de entrada...");
 			CSVs = csv.split(iWorkers);
 		} else {
 			CSVs[0] = csv;
 		}
+		timers[0].stop();
 
 		// Genera los DataFrames necesarios para el procesamiento
 	       	this.df = new DataFrame[iWorkers];
-	       	this.timers = new Timer[iWorkers];
 		for (int thread=0; thread<iWorkers; thread++) {
 			df[thread]=new DataFrame();
 			df[thread].inputCSV(CSVs[thread]);
-			//@eml: hay que simplificar, creo que basta con definir un CSV
 			df[thread].outputCSV(CSVs[thread]);
 		}
 
@@ -77,19 +82,22 @@ public final class Manager implements InterfaceManager<CSV> {
 
 		// Inicia la ejecucion de los hilos con un Worker
 		// que recibe el DataFrame a usar y el query a procesar.
-		System.out.println("Procesando el archivo...");
+		timers[1].start();
+		System.out.print("Procesando el archivo...");
 		for (int thread=0; thread<iWorkers; thread++)
 			poolDataFrames.execute (new Worker(query,this.df[thread]));
 
 		poolDataFrames.shutdown();
 		while (!poolDataFrames.isTerminated()) { 
 			try { 
+		                System.out.print(".");
 				Thread.sleep(100); 
 			} catch (InterruptedException e) { 
 			}
 		}
+		timers[1].stop();
+		System.out.println(".");
 		System.out.println("Procesamiento concluido");
-
 
 		return (true);
 	}
@@ -102,8 +110,11 @@ public final class Manager implements InterfaceManager<CSV> {
 	@Override
 	public boolean saveQuery(CSV csv) {
 		System.out.println("Integrando el archivo de salida...");
+		timers[2].start();
 		if (this.parallel) 
 			csv.join(CSVs);
+		timers[2].stop();
+
 		return (true);
 	}
 
@@ -111,36 +122,42 @@ public final class Manager implements InterfaceManager<CSV> {
 	 * Retorna las metricas del procesamiento
 	 */ 
 	@Override
-	public int[] timers() {
-		int[] iTimers;
-		iTimers = new int[1];
+	public long[] timers() {
+		long[] times;
+		times = new long[3];
+		for (int i=0; i<3; i++)
+			times[i]=timers[i].elapsedTime();
 
-		return (iTimers);
+		return (times);
+	}
+
+	public int getCPUs() {
+		return (this.CPUs);
 	}
 }
 
 /*
  * Clase utilitaria para llevar el registro de los tiempos de 
- * procesamiento consumidos por un Worker.
+ * procesamiento consumidos en el procesamiento.
  */
-final class Timer {
-	int startTime;
-	int stopTime;
+class StopWatch {
+	private long startTime;
+	private long stopTime;
 
-	protected Timer() {
+	protected StopWatch() {
 		startTime=0;
 		stopTime=0;
 	}
 
-	void start() {
-		startTime = 0;
+	protected void start() {
+		startTime = System.nanoTime();
 	}
 
-	void stop() {
-		stopTime = 0;
+	protected void stop() {
+		stopTime = System.nanoTime();
 	}
 
-	int elapsedTime() {
+	protected long elapsedTime() {
 		return (stopTime-startTime);
 	}
 }
@@ -163,9 +180,7 @@ final class Worker implements Runnable {
 
 	@Override
 	public void run() {
-		 //try { 
-			 dataFrame.executeQuery(strQuery);
-		 //} catch (InterruptedException e) { 
-		 //}
+		dataFrame.executeQuery(strQuery);
 	}
 }
+

@@ -26,5 +26,5 @@ interface InterfaceManager<CSV> {
 	/* 
 	 * Retorna las metricas del procesamiento
 	 */ 
-	public int[] timers();
+	public long[] timers();
 }
