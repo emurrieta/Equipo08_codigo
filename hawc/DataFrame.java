@@ -26,12 +26,18 @@ public class DataFrame implements InterfaceDataFrame<CSV> {
         
 	public boolean executeQuery(String query) { 
                 
-                int numRenglones = 500; //numero de renglones que se usaran
                 
                 String[] nombreColumnas = Query.nombreColumas(query);
+                int[] listaDeIndices = new int[nombreColumnas.length];
                 
-                int[] listaDeIndices = Query.numeroColumnas(nombreColumnas, this.colnames);
-
+                try {
+                    listaDeIndices = Query.numeroColumnas(nombreColumnas, this.colnames); 
+                }
+                catch(NoSuchElementException e) {
+                    System.out.println("El nombre de una columa en el query no existe en la base");
+                    return false;
+                }
+                
 		String encabezado = String.join(",",nombreColumnas);
                 this.archivoSalida.putRecord(encabezado);
                 
