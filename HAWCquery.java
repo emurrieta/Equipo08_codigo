@@ -96,10 +96,10 @@ public class HAWCquery {
 					String.format("%.2f",(double)timers[0]/1000000000)+" s"); 
 			System.out.println ("Procesamiento del query en paralelo:\t"+
 					String.format("%.2f",(double)timers[1]/1000000000)+" s"); 
-			System.out.println ("Unificacion de salida en modo serial:\t"+i
+			System.out.println ("Unificacion de salida en modo serial:\t"+
 					String.format("%.2f",(double)timers[2]/1000000000)+" s");
 		} else { 
-			System.out.println ("Procesamiento del query en serie:\t"+i
+			System.out.println ("Procesamiento del query en serie:\t"+
 					String.format("%.2f",(double)timers[1]/1000000000)+" s"); 
 		}
 
