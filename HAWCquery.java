@@ -92,13 +92,15 @@ public class HAWCquery {
 		System.out.println ("========================================================================");
 		System.out.println ("Hilos: "+manager.getCPUs());
 		if (manager.getCPUs()>1) { 
-			System.out.println ("Segmentado de archivo en modo serial:\t"+String.format("%.2f",(double)timers[0]/1000000000)+" s"); 
-			System.out.println ("Procesamiento del query en paralelo:\t"+String.format("%.2f",(double)timers[1]/1000000000)+" s"); 
-			System.out.println ("Unificacion de salida en modo serial:\t"+String.format("%.2f",(double)timers[2]/1000000000)+" s");
+			System.out.println ("Segmentado de archivo en modo serial:\t"+
+					String.format("%.2f",(double)timers[0]/1000000000)+" s"); 
+			System.out.println ("Procesamiento del query en paralelo:\t"+
+					String.format("%.2f",(double)timers[1]/1000000000)+" s"); 
+			System.out.println ("Unificacion de salida en modo serial:\t"+i
+					String.format("%.2f",(double)timers[2]/1000000000)+" s");
 		} else { 
-			//System.out.println ("Segmentado de archivo en modo serial:\t"+(double)timers[0]/1000000000+" s"); 
-			System.out.println ("Procesamiento del query en serie:\t"+String.format("%.2f",(double)timers[1]/1000000000)+" s"); 
-			//System.out.println ("Unificacion de salida en modo serial:\t"+(double)timers[2]/1000000000+" s");
+			System.out.println ("Procesamiento del query en serie:\t"+i
+					String.format("%.2f",(double)timers[1]/1000000000)+" s"); 
 		}
 
 		System.out.println ("Tiempo total:\t\t\t\t"+String.format("%.2f",(double)totalTime/1000000000)+" s");
