@@ -124,6 +124,28 @@ public class Query {
             return indices;
         }
     
-    
+    public static int conteoCadenas(String busqueda, String cadena){
+        
+        if(cadena.length() ==0) {
+            return 0;
+        }
+        
+        int indicePrimeraOcurrencia = cadena.indexOf(busqueda);
+        
+        if( indicePrimeraOcurrencia != -1) {
+            String subcadena = cadena.substring(busqueda.length()+indicePrimeraOcurrencia);
+            return 1+ conteoCadenas( busqueda, subcadena);
+        }
+        else {
+            return 0;
+        }
+        //while (indicePrimeraOcurrencia != -1) {
+        //    conteo++;
+        //    cadena = cadena.substring(indicePrimeraOcurrencia+longitudBusqueda);
+        //    indicePrimeraOcurrencia = cadena.indexOf(busqueda, 0);
+        //    conteo++;
+        //}
+        //return conteo;
+    }//termina conteoCadenas    
     
 }

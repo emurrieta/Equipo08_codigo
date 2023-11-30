@@ -34,7 +34,7 @@ public class DataFrame implements InterfaceDataFrame<CSV> {
                     listaDeIndices = Query.numeroColumnas(nombreColumnas, this.colnames); 
                 }
                 catch(NoSuchElementException e) {
-                    System.out.println("El nombre de una columa en el query no existe en la base");
+                    Utils.println("El nombre de una columa en el query no existe en la base");
                     return false;
                 }
                 
