@@ -123,8 +123,8 @@ public class CSV implements InterfaceCSV<CSV> {
      */ 
           
      @Override
-         public CSV[] split(int segments) {
-              try {
+     public CSV[] split(int segments) {
+        try {
         if (reader == null) {
             throw new IllegalStateException("Debes abrir el archivo de entrada antes de intentar dividirlo.");
         }

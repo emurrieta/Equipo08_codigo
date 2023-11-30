@@ -64,6 +64,8 @@ public final class Manager implements InterfaceManager<CSV> {
 		if (parallel) {
 			System.out.println("Segmentando el archivo de entrada...");
 			CSVs = csv.split(iWorkers);
+			if (CSVs == null) 
+				return false;
 		} else {
 			CSVs[0] = csv;
 		}
@@ -83,7 +85,7 @@ public final class Manager implements InterfaceManager<CSV> {
 		// Inicia la ejecucion de los hilos con un Worker
 		// que recibe el DataFrame a usar y el query a procesar.
 		timers[1].start();
-		System.out.print("Procesando el archivo...");
+		System.out.print("Realizando Query...");
 		for (int thread=0; thread<iWorkers; thread++)
 			poolDataFrames.execute (new Worker(query,this.df[thread]));
 
@@ -97,7 +99,7 @@ public final class Manager implements InterfaceManager<CSV> {
 		}
 		timers[1].stop();
 		System.out.println(".");
-		System.out.println("Procesamiento concluido");
+		System.out.println("Query concluido");
 
 		return (true);
 	}
@@ -112,10 +114,10 @@ public final class Manager implements InterfaceManager<CSV> {
 		System.out.println("Integrando el archivo de salida...");
 		timers[2].start();
 		if (this.parallel) 
-			csv.join(CSVs);
+			if (csv.join(CSVs)==null) return false;
 		timers[2].stop();
 
-		return (true);
+		return true;
 	}
 
 	/* 

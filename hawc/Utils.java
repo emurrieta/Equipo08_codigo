@@ -2,6 +2,8 @@ package hawc;
 
 import java.nio.file.*;
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Utils {
 	private static boolean debugMode=false;
@@ -20,15 +22,11 @@ public class Utils {
 			System.out.print(message);
 	}
 
-	public static Path createTmpDir() {
+	public static Path createTmpDir() throws IOException {
 		Path tmpDir = Paths.get("");
-                //String subdirSymbol = FileSystems.getDefault().getSeparator();
-                try {
-                        tmpDir = Files.createTempDirectory(tmpDir,"tmp");
-                        tmpDir.toFile().deleteOnExit();
-                } catch (IOException ioError) {
-                        Utils.println("Utils> Error al crear directorio temporal");
-                }
+
+                tmpDir = Files.createTempDirectory(tmpDir,"tmp");
+                tmpDir.toFile().deleteOnExit();
 
 		return tmpDir;
 	}
@@ -38,11 +36,50 @@ public class Utils {
 			File dir = new File(tmpDir.toString());
 			File filesList[] = dir.listFiles();
 			for (File f: filesList) { 
-				Files.deleteIfExists(Paths.get(f.getAbsolutePath()));
+				Files.deleteIfExists(Paths.get(f.getAbsolutePath())); 
 			}
 		} catch (IOException ioError) {
 			Utils.println("Utils> Error al borrar el directorio temporal");
 		}
+	}
+
+	public static boolean createDir (String dir) {
+		Path directory = Paths.get(dir);
+		if (Files.notExists(directory)) {
+			try {
+				Files.createDirectory(directory);
+			} catch (IOException ioError) {
+				return false;
+			}
+		} else {
+			Utils.println("El directorio "+directory.toString()+" ya existe");
+		}
+		return true;
+	}
+
+	public static String getFileExtension(String name) {
+		int dot = name.lastIndexOf(".");
+		if (dot>0) 
+			return name.substring(dot);
+		else
+			return null; 
+	}
+
+	public static String getOutputFilenameFor(String inputFile) {
+		Path input;
+		String slash = FileSystems.getDefault().getSeparator();
+		String extension = getFileExtension(inputFile);
+
+		if (extension!=null) 
+			input = Paths.get(inputFile.replace(extension,""));
+		else
+		       	input = Paths.get(inputFile);
+		LocalDateTime now = LocalDateTime.now(); 
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("(yyyyMMdd_HHmm)"); 
+		String timeStamp = now.format(format);
+		String output = "resultados"+slash+input.getFileName().toString()+timeStamp+".csv";
+
+		return output;
 	}
 
 }
