@@ -19,7 +19,7 @@ public class HAWCquery {
 				CPUs=Integer.parseInt(args[++i]);
 				arguments-=2;
 			}
-			else if (args[i].equals("-v")) {
+			else if (args[i].equals("-d")) {
 				Utils.setDebug(true);
 				arguments-=1;
 			}
@@ -30,7 +30,7 @@ public class HAWCquery {
 		}
 
 		if (arguments < 2) {
-			System.err.println("Requiere los argumentos: [-n CPUs] [-o CSV_salida] [-v] CSV_entrada \"Query\"");
+			System.err.println("Requiere los argumentos: [-n Hilos] [-o CSV_salida] [-d] CSV_entrada \"Query\"");
 			System.exit(0);
 		} 
 		
