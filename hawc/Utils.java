@@ -77,7 +77,7 @@ public class Utils {
 		LocalDateTime now = LocalDateTime.now(); 
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("(yyyyMMdd_HHmm)"); 
 		String timeStamp = now.format(format);
-		String output = "resultados"+slash+input.getFileName().toString()+timeStamp+".csv";
+		String output = "resultados"+slash+input.getFileName().toString()+"_filtered"+timeStamp+".csv";
 
 		return output;
 	}
