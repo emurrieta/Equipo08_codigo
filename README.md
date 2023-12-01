@@ -53,18 +53,3 @@ CSV_entrada : Nombre del archivo CSV de entrada.
 Al terminar el programa se muestran las mediciones del tiempo invertido en
 cada etapa del procesamiento como se muestra a continuación.
 
-$ java HAWCquery data/reco_run010459_00001-00002.csv 'select(rec.eventID/U/1,rec.coreX/F/0.1,rec.coreY/F/0.1, rec.logNPE/F/0.01)'
-Segmentando el archivo de entrada...
-Realizando Query............................................................................................................................
-Query concluido
-Integrando el archivo de salida...
-========================================================================
-*                               METRICAS                               *
-========================================================================
-Hilos: 96
-Segmentado de archivo en modo serial:	48.75 s
-Procesamiento del query en paralelo:	12.96 s
-Unificacion de salida en modo serial:	35.55 s
-Tiempo total:				                  97.26 s
-========================================================================
-
