@@ -1,0 +1,220 @@
+Posgrado en Ingeniería y Ciencias de la Computación
+Programación Avanzada 2024-1
+
+Montejano Donova
+Murrieta Eduardo
+Salcido Alejandro
+---------------------------------------------------------
+			HAWCquery
+
+	La aplicación cuenta con un archivo Makefile para
+facilitar la compilación y pruebas de la aplicación, esta
+herramienta funciona en sistemas Linux y Mac; en los sis-
+temas Windows se requiere de herramientas adicionales al
+sistema operativo para poder usar el Makefile por lo que
+no es de utilidad.
+
+--------------------------------------------------------
+CONTENIDO:
+	I. Sistemas Linux y Mac
+	I.1 Compilación de la aplicación
+	I.2 Descarga del DataSet
+	I.3 Ejemplo básico con 100 registros
+	I.4 Ejemplo paralelo con 11 millones de registros
+	I.5 Ejemplo serial con 11 millones de registros
+	I.6 Ejemplo de consulta con seleccion de registros
+            usando where
+	I.7 Despliegue de notebook para analisis estadísitco
+
+	II. Sistemas Windows
+
+	III. Opciones de la linea de comandos
+
+--------------------------------------------------------
+I. Sistemas Linux y Mac 
+
+=========================================================
+I.1 Compilación de la aplicación
+=========================================================
+
+$ make
+javac hawc/CSV.java
+javac hawc/DataFrame.java
+javac hawc/InterfaceManager.java
+javac hawc/Manager.java
+javac HAWCquery.java
+
+=========================================================
+I.2 Descarga del DataSet
+=========================================================
+
+$ make download
+curl -L -o data/bigSample.zip 'https://docs.google.com/uc?export=download&id=1pB67QdNKIygB1V9Mv2QqPaATN7cZJ-mF&confirm=no_antivirus'
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100  761M  100  761M    0     0  41.8M      0  0:00:18  0:00:18 --:--:-- 43.5M
+unzip -d data data/bigSample.zip
+Archive:  data/bigSample.zip
+  inflating: data/reco_run010459_00001-00004.csv
+
+=========================================================
+I.3 Ejemplo básico con 100 registros
+=========================================================
+
+$ make shortdemo
+java HAWCquery data/reco_run002054_00226_sample100.csv "select(rec.eventID/U/1,rec.coreX/F/0.1,rec.coreY/F/0.1,rec.logNPE/F/0.01)"
+Segmentando el archivo de entrada...
+Realizando Query.....
+Query concluido
+Integrando el archivo de salida...
+========================================================================
+*                               METRICAS                               *
+========================================================================
+Hilos: 96
+Registros de entrada: 100
+Registros de salida:  100
+Segmentado de archivo en modo serial:	0.14 s
+Procesamiento del query en paralelo:	0.18 s
+Unificacion de salida en modo serial:	0.02 s
+Tiempo total:				0.33 s
+========================================================================
+
+=========================================================
+I.4 Ejemplo paralelo con 11 millones de registros
+=========================================================
+
+$ make bigdemo
+[ -f data/bigSample.zip ] || curl -L -o data/bigSample.zip 'https://docs.google.com/uc?export=download&id=1pB67QdNKIygB1V9Mv2QqPaATN7cZJ-mF&confirm=no_antivirus'
+unzip -u -d data data/bigSample.zip
+Archive:  data/bigSample.zip
+java HAWCquery data/reco_run010459_00001-00004.csv "select(rec.eventID/U/1,rec.coreX/F/0.1,rec.coreY/F/0.1,rec.logNPE/F/0.01)"
+Segmentando el archivo de entrada...
+Realizando Query..................................................................
+Query concluido
+Integrando el archivo de salida...
+========================================================================
+*                               METRICAS                               *
+========================================================================
+Hilos: 96
+Registros de entrada: 11,909,938
+Registros de salida:  11,909,938
+Segmentado de archivo en modo serial:	19.14 s
+Procesamiento del query en paralelo:	7.27 s
+Unificacion de salida en modo serial:	3.81 s
+Tiempo total:				30.22 s
+========================================================================
+
+
+=========================================================
+I.5 Ejemplo serial con 11 millones de registros
+=========================================================
+
+$ make serialdemo
+[ -f data/bigSample.zip ] || curl -L -o data/bigSample.zip 'https://docs.google.com/uc?export=download&id=1pB67QdNKIygB1V9Mv2QqPaATN7cZJ-mF&confirm=no_antivirus'
+unzip -u -d data data/bigSample.zip
+Archive:  data/bigSample.zip
+java HAWCquery -n 1 data/reco_run010459_00001-00004.csv "select(rec.eventID/U/1,rec.coreX/F/0.1,rec.coreY/F/0.1,rec.logNPE/F/0.01)"
+Realizando Query.........................................................................................................................................................................................................................................................................................................................................................................................
+Query concluido
+Integrando el archivo de salida...
+========================================================================
+*                               METRICAS                               *
+========================================================================
+Hilos: 1
+Registros de entrada: 11,909,938
+Registros de salida:  11,909,938
+Procesamiento del query en serie:	37.37 s
+Tiempo total:				37.37 s
+========================================================================
+
+=========================================================
+I.6 Ejemplo de consulta con seleccion de registros usando
+    where
+=========================================================
+
+$ make wheredemo
+[ -f data/bigSample.zip ] || curl -L -o data/bigSample.zip 'https://docs.google.com/uc?export=download&id=1pB67QdNKIygB1V9Mv2QqPaATN7cZJ-mF&confirm=no_antivirus'
+unzip -u -d data data/bigSample.zip
+Archive:  data/bigSample.zip
+java HAWCquery data/reco_run010459_00001-00004.csv "select(rec.eventID/U/1,rec.coreX/F/0.1,rec.coreY/F/0.1,rec.logNPE/F/0.01) where(rec.eventID/U/1>=200,rec.coreX/F/0.1>=0)"
+Segmentando el archivo de entrada...
+Realizando Query.......................................................
+Query concluido
+Integrando el archivo de salida...
+========================================================================
+*                               METRICAS                               *
+========================================================================
+Hilos: 96
+Registros de entrada: 11,909,938
+Registros de salida:  5,435,617
+Segmentado de archivo en modo serial:	11.27 s
+Procesamiento del query en paralelo:	6.75 s
+Unificacion de salida en modo serial:	1.52 s
+Tiempo total:				19.54 s
+========================================================================
+
+=========================================================
+I.7 Despliegue de notebook para analisis estadísitco
+=========================================================
+
+$ make notebook
+jupyter notebook --NotebookApp.token='' --NotebookApp.password='' #Postprocesamiento.ipynb
+[I 17:21:32.925 NotebookApp] Authentication of /metrics is OFF, since other authentication is disabled.
+[W 17:21:33.276 NotebookApp] All authentication is disabled.  Anyone who can connect to this server will be able to run code.
+[I 17:21:33.747 NotebookApp] Serving notebooks from local directory: /storage.sas/eml/src/PCIC/ProgAva/PCIC_ProgAvz
+[I 17:21:33.747 NotebookApp] Jupyter Notebook 6.4.8 is running at:
+[I 17:21:33.747 NotebookApp] http://localhost:8888/
+[I 17:21:33.747 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+/home/eml/.local/lib/python3.10/site-packages/jupyter_server/base/handlers.py:240: UserWarning: The Tornado web application does not have an 'identity_provider' defined in its settings. In future releases of jupyter_server, this will be a required key for all subclasses of `JupyterHandler`. For an example, see the jupyter_server source code for how to add an identity provider to the tornado settings: https://github.com/jupyter-server/jupyter_server/blob/v2.0.0/jupyter_server/serverapp.py#L242
+  warnings.warn(
+
+
+Se abre la Interfaz del Jupyter-Notebook en el navegador,
+abrir el archivo Postprocesamiento.ipynb
+
+
+II. Sistemas Windows
+
+
+III. Opciones de la linea de comandos
+
+Sin argumentos
+$ java HAWCquery
+Requiere los argumentos: [-n Hilos] [-o CSV_salida] [-d] CSV_entrada "Query"
+
+El programa muestra que para ejecutarse existen argumentos que son opcionales
+entre corchetes [] y obligatorios sin corchetes.
+
+[-n Hilos] : inidica el número de hilos a usar, si es 1 la ejecución es serial,
+             si es mayor a uno se ejecuta con el numero de hilos indicado. Por
+             omisión el número de hilos es igual al total de cores disponibles
+             multiplicado por 4.
+
+[-o CSV_salida] : Indica un nombre para el archivo de salida, en caso de no
+             indicarlo los resultados se guardan en el directorio resultados
+             (se crea si no existe) con el nombre:
+                                     CSV_entrada_filtered(AAAAMMDD_HHMM).csv
+[-d] :       Habilita el modo de depuración, imprime mensajes utilizados para
+             dar seguimiento al flujo del proceso.
+
+CSV_entrada : Nombre del archivo CSV de entrada.
+
+"Query" :    Entrecomillado, indica los campos que deben seleccionarse del
+             CSV como por ejemplo "select(rec.eventID/U/1,rec.logNPE/F/0.01)"
+             indica que se deben seleccionar las columnas "rec.eventID/U/1"
+             y "rec.logNPE/F/0.01".
+             En caso de que exista algún error en la sintaxis del Query o
+             en el nombre de algún campo, se notifica de un error y el
+             programa termina.
+	     
+	     Es posible aplicar un filtrado sobre los registros usando la
+	     cláusula where() e indicar entre los paréntesis la condición
+	     que debe cumplir cada columna, por ejemplo si se desea seleccionar
+	     sólo a los eventos cuyo eventID sea mayor o igual a 200, 
+	     la sentencia sería: 
+		'select(rec.eventID/U/1) where(rec.eventID/U/1>=200)' 
+	     Se admiten los operadores '>','<','=','<=' y '>='
+
+
+
