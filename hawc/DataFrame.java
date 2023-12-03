@@ -4,7 +4,7 @@
  * Clase para el filtrado de columnas en un archivo CSV.
  *
  * Programador: Alejandro Salcido
- * Correciones: Eduardo Murrieta
+ * Revisiones: Eduardo Murrieta
  */
 package hawc;
 
