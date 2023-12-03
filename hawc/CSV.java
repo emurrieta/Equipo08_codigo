@@ -5,7 +5,7 @@
  * con archivos CSV.
  *
  * Programador: Donovan Montejano
- * Correciones: Eduardo Murrieta
+ * Revisiones: Eduardo Murrieta
  */
 package hawc;
 import java.io.*;
