@@ -29,8 +29,8 @@ Sin argumentos
 $ java HAWCquery 
 Requiere los argumentos: [-n Hilos] [-o CSV_salida] [-d] CSV_entrada "Query"
 
-El programa muestra que para ejecutarse existen argumentos que son obligatorios
-entre corchetes [] y definitivos sin corchetes.
+El programa muestra que para ejecutarse existen argumentos que son opcionales
+entre corchetes [] y obligatorios sin corchetes.
 
 [-n Hilos] : inidica el número de hilos a usar, si es 1 la ejecución es serial,
              si es mayor a uno se ejecuta con el numero de hilos indicado. Por
