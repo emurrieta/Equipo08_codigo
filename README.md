@@ -17,10 +17,15 @@ csv de entrada y otro con 500 mil registros.
 
 El código se compila con:
 
+make 
+
+o con 
+
 javac HAWCquery.java
 
 Ejemplos de ejecución:
-1) Sin argumentos
+
+Sin argumentos
 $ java HAWCquery 
 Requiere los argumentos: [-n Hilos] [-o CSV_salida] [-d] CSV_entrada "Query"
 
@@ -48,6 +53,18 @@ CSV_entrada : Nombre del archivo CSV de entrada.
              En caso de que exista algún error en la sintaxis del Query o
              en el nombre de algún campo, se notifica de un error y el 
              programa termina.
+
+Una ejecución de ejemplo:
+
+make demo
+
+o con:
+
+java HAWCquery data/reco_run002054_00226_sample100.csv "select(rec.eventID/U/1,rec.coreX/F/0.1,rec.coreY/F/0.1,rec.logNPE/F/0.01)"
+
+Con condicionales:
+ 
+java HAWCquery data/reco_run002054_00226_sample100.csv "select(rec.eventID/U/1,rec.coreX/F/0.1,rec.coreY/F/0.1,rec.logNPE/F/0.01) where(rec.eventID/U/1<=100,rec.coreX/F/0.1>=0)" 
 
 Al terminar el programa se muestran las mediciones del tiempo invertido en
 cada etapa del procesamiento como se muestra a continuación.
