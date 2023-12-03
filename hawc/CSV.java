@@ -1,3 +1,12 @@
+/*
+ * Clase: CSV
+ *
+ * Clase para manejar las operaciones de entrada y salida
+ * con archivos CSV.
+ *
+ * Programador: Donovan Montejano
+ * Correciones: Eduardo Murrieta
+ */
 package hawc;
 import java.io.*;
 import java.nio.file.*;
@@ -9,6 +18,8 @@ public class CSV implements InterfaceCSV<CSV> {
     private String inputFilePath;
     private String outputFilePath;
     private Path tmpDir;
+    private long recordsIn;
+    private long recordsOut;
     
     /* 
      * Define la ruta del archivo CSV de entrada
@@ -50,8 +61,10 @@ public class CSV implements InterfaceCSV<CSV> {
             //Asignación de ruta de archivo 
                inputFilePath = inputPath;
             //Lector de archivos 
-               reader = new BufferedReader(new FileReader(inputFilePath));
+               reader = new BufferedReader(new FileReader(inputFilePath),1024*1024);
                     Utils.println("Archivo de entrada abierto correctamente: " + inputFilePath);
+
+            this.recordsIn = 0;
             return true;
 
         } catch (IllegalArgumentException | SecurityException | FileNotFoundException e) {
@@ -106,6 +119,8 @@ public class CSV implements InterfaceCSV<CSV> {
         // Escritura del archivo 
             writer = new BufferedWriter(new FileWriter(outputFilePath));
              Utils.println("Archivo de salida creado correctamente: " + outputPath);
+
+        this.recordsOut = 0;
         return true;
 
     } catch (IllegalArgumentException | SecurityException | IOException e) {
@@ -211,11 +226,15 @@ public class CSV implements InterfaceCSV<CSV> {
 
 	    String header="";
             for (CSV segment : segments) {
+		String hdr;
                 // Crear el lector para el segmento  
-                segment.reader = new BufferedReader(new FileReader(segment.outputFilePath),32*1024);
+                segment.reader = new BufferedReader(new FileReader(segment.outputFilePath));
 		// Eliminamos del buffer la primera linea que corresponde con el encabezado
-		header=segment.getRecord();
+		hdr=segment.getRecord();
+		if (hdr!=null) header=hdr;
 	    }
+	   
+            if (header.length()==0) return(this); // no hay datos
 
             this.putRecord(header);
 
@@ -253,42 +272,43 @@ public class CSV implements InterfaceCSV<CSV> {
      */  
             
      @Override
-         public String getRecord() {
-             try {
-        if (reader != null) {
-            //Lectrura del archivo 
-            String record = reader.readLine();
-            if (record != null) {
-                Utils.println("Registro leído: " + record);
-                return record;
-            } else {
-                // Cerrar el lector cuando se alcanza el final del archivo
-                reader.close();
-                Utils.println("Fin del archivo alcanzado.");
-                return null;
-            }
-        } else {
-            throw new IllegalStateException("Debes abrir el archivo de entrada antes de intentar leer registros.");
-        }
-
-    } catch (IOException e) {
-        System.err.println("Error al leer el registro: " + e.getMessage());
-        return null;
+     public String getRecord() { 
+	     try { 
+		     if (reader != null) { 
+			     //Lectrura del archivo 
+			     String record = reader.readLine(); 
+			     if (record != null) { 
+				     Utils.println("Registro leído: " + record); 
+				     this.recordsIn++;
+				     return record; 
+			     } else { 
+				     // Cerrar el lector cuando se alcanza el final del archivo 
+				     reader.close(); 
+				     Utils.println("Fin del archivo alcanzado."); 
+				     return null; 
+			     } 
+		     } else { 
+			     throw new IllegalStateException(
+			     "Debes abrir el archivo de entrada antes de intentar leer registros."); 
+		     } 
+	     } catch (IOException e) { 
+		     System.err.println("Error al leer el registro: " + e.getMessage()); 
+		     return null; 
+	     } 
     }
-}
      /*
      * Guarda un registro o cadena en el archivo
      * CSV de salida.
      */
          
      @Override
-         public void putRecord(String record) {
-             try {
-            if (writer != null) {
+     public void putRecord(String record) { 
+	     try { 
+		     if (writer != null && record.length()>0) {
                 // Escribir el registro en el archivo de salida
                 writer.write(record);
                 writer.write("\n"); //Agregar un salto de linea 
-                //writer.flush(); // Forzar la escritura del buffer al archivo
+		this.recordsOut++;
 
                 Utils.println("Registro escrito en el archivo de salida: " + record);
             } else {
@@ -298,5 +318,21 @@ public class CSV implements InterfaceCSV<CSV> {
         } catch (IOException e) {
             System.err.println("Error al escribir el registro: " + e.getMessage());
         }
+    }
+
+    public void flush() {
+	    try { 
+		    if (writer!=null) writer.flush();
+	    } catch (IOException e) { 
+		    System.err.println("Error al vaciar el buffer del writer: " + e.getMessage());
+	    }
+    }
+
+    public long[] estadisticas () {
+	    long [] stat = new long[2];
+	    stat[0] = recordsIn;
+	    stat[1] = recordsOut;
+
+	    return stat;
     }
 }

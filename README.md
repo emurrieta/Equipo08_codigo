@@ -60,6 +60,6 @@ Hilos: 96
 Segmentado de archivo en modo serial:   50.55 s
 Procesamiento del query en paralelo:    13.63 s
 Unificacion de salida en modo serial:   37.23 s
-Tiempo total:                           101.41 s
+Tiempo total:				101.41 s
 ========================================================================
 

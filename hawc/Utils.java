@@ -2,6 +2,7 @@ package hawc;
 
 import java.nio.file.*;
 import java.io.*;
+import java.util.Arrays;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -42,6 +43,26 @@ public class Utils {
 			Utils.println("Utils> Error al borrar el directorio temporal");
 		}
 	}
+
+	//regresa el indice de un nombre en un vector de strings ejemplo
+        // "A" en ["D", "A", "z"] devuelve 1
+        public static int nombreEnVector(String cadena, String nombres) {
+            int indice = Arrays.asList(nombres).indexOf(cadena);
+            return indice;
+        }
+
+        //version vectorial de nombreEnVector
+        public static int[] nombresEnVector(String[] cadena, String nombres) {
+
+            int[] resultado = new int[cadena.length];
+
+            for(int i=0; i<nombres.length(); i++) {
+                resultado[i] = nombreEnVector(cadena[i], nombres   );
+            }
+
+            return resultado;
+        }
+
 
 	public static boolean createDir (String dir) {
 		Path directory = Paths.get(dir);

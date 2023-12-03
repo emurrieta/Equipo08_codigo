@@ -1,3 +1,35 @@
+/*
+ * Clase: Manager
+ *
+ * Implementa el modelo Manager-Worker usando programación 
+ * multihilos.
+ *
+ * Programador: Eduardo Murrieta
+ * Revisores:   Donovan Montejano, Alejandro Salcido.
+ *
+ * ------------------------------------------------------------------------
+ * Métodos públicos:
+ * 	public Manager (int CPUs): constructor, indica la cantidad de workers
+ * 			que se usarán.
+ *
+ * 	public void setProcessingModel(boolean parallel): intercambia entre 
+ * 			el modelo de procesamiento serial o paralelo.
+ *
+ * 	public boolean processQuery(String query,CSV csv): inicia el análisis
+ * 			del 'csv' usando el filtro 'query'. 
+ *
+ * 	public boolean saveQuery(CSV csv): Guarda el resultado del 'query' en 
+ * 			el 'csv' de salida.
+ *
+ * 	public long[] timers(): Retorna las métricas de tiempo del trabajo de
+ * 			los workers con las posiciones siguientes:
+ * 			0 : Tiempo de segmentación serial del CSV
+ * 			1 : Tiempo de filtrado del CSV
+ * 			2 : Tiempo de integración de los segmentos de salida.
+ *
+ * 	public int getCPUs():  Retorna el total de CPUs en la arquitectura.
+ *
+ */
 package hawc;
 
 import java.lang.Runtime;
@@ -108,7 +140,7 @@ public final class Manager implements InterfaceManager<CSV> {
 	 * Guarda el resultado de un Query en el archivo path.
 	 * Retorna True si el guardado fue correcto o False en
 	 * caso contrario. 
-	 */ 
+	 */
 	@Override
 	public boolean saveQuery(CSV csv) {
 		System.out.println("Integrando el archivo de salida...");
@@ -121,7 +153,11 @@ public final class Manager implements InterfaceManager<CSV> {
 	}
 
 	/* 
-	 * Retorna las metricas del procesamiento
+	 * Retorna las metricas del procesamiento de los workers
+	 * con las posiciones siguientes: 
+	 *	0 : Tiempo de segmentación del CSV 
+	 *	1 : Tiempo de filtrado del CSV 	
+	 *	2 : Tiempo de integración de los segmentos de salida
 	 */ 
 	@Override
 	public long[] timers() {
@@ -133,6 +169,7 @@ public final class Manager implements InterfaceManager<CSV> {
 		return (times);
 	}
 
+	// Retorna el total de CPUs en la arquitectura
 	public int getCPUs() {
 		return (this.CPUs);
 	}
@@ -140,7 +177,7 @@ public final class Manager implements InterfaceManager<CSV> {
 
 /*
  * Clase utilitaria para llevar el registro de los tiempos de 
- * procesamiento consumidos en el procesamiento.
+ * procesamiento consumidos.
  */
 class StopWatch {
 	private long startTime;
@@ -164,7 +201,11 @@ class StopWatch {
 	}
 }
 
-
+/*
+ * Clase Worker
+ * Complemento del Manager, asigna el trabajo que debe realizar
+ * cada hilo con un DataFrame y CSV asociados.
+ */
 final class Worker implements Runnable {
 	String strQuery;
 	DataFrame dataFrame;
