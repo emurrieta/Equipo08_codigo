@@ -212,7 +212,7 @@ public class CSV implements InterfaceCSV<CSV> {
 	    String header="";
             for (CSV segment : segments) {
                 // Crear el lector para el segmento  
-                segment.reader = new BufferedReader(new FileReader(segment.outputFilePath));
+                segment.reader = new BufferedReader(new FileReader(segment.outputFilePath),32*1024);
 		// Eliminamos del buffer la primera linea que corresponde con el encabezado
 		header=segment.getRecord();
 	    }
@@ -288,7 +288,7 @@ public class CSV implements InterfaceCSV<CSV> {
                 // Escribir el registro en el archivo de salida
                 writer.write(record);
                 writer.write("\n"); //Agregar un salto de linea 
-                writer.flush(); // Forzar la escritura del buffer al archivo
+                //writer.flush(); // Forzar la escritura del buffer al archivo
 
                 Utils.println("Registro escrito en el archivo de salida: " + record);
             } else {
