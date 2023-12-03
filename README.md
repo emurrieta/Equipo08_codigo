@@ -46,14 +46,14 @@ CSV_entrada : Nombre del archivo CSV de entrada.
              indica que se deben seleccionar las columnas "rec.eventID/U/1"
              y "rec.logNPE/F/0.01".
              En caso de que exista algún error en la sintaxis del Query o
-             de en el nombre de algún campo, se notifica de un error y el 
+             en el nombre de algún campo, se notifica de un error y el 
              programa termina.
 
 Al terminar el programa se muestran las mediciones del tiempo invertido en
 cada etapa del procesamiento como se muestra a continuación.
 
 ========================================================================
-*                               METRICAS                               *
+                                METRICAS                                
 ========================================================================
 Hilos: 96
 Segmentado de archivo en modo serial:   50.55 s
