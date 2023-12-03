@@ -55,8 +55,15 @@ cada etapa del procesamiento como se muestra a continuación.
                                 METRICAS                                
 
 Hilos: 96
-Segmentado de archivo en modo serial:   50.55 s
-Procesamiento del query en paralelo:    13.63 s
-Unificacion de salida en modo serial:   37.23 s
-Tiempo total:				101.41 s
 
+Registros de entrada: 5,952,076
+
+Registros de salida:  694,535
+
+Segmentado de archivo en modo serial:	10.53 s
+
+Procesamiento del query en paralelo:	4.46 s
+
+Unificacion de salida en modo serial:	0.23 s
+
+Tiempo total:				                  15.22 s
