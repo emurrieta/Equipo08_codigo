@@ -58,6 +58,10 @@ unzip -d data data/bigSample.zip
 Archive:  data/bigSample.zip
   inflating: data/reco_run010459_00001-00004.csv
 
+
+URL del DataSet para descarga manual: 
+	https://docs.google.com/uc?export=download&id=1pB67QdNKIygB1V9Mv2QqPaATN7cZJ-mF&confirm=no_antivirus
+
 =========================================================
 I.3 Ejemplo básico con 100 registros
 =========================================================
