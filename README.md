@@ -45,7 +45,6 @@ CSV_entrada : Nombre del archivo CSV de entrada.
              CSV como por ejemplo "select(rec.eventID/U/1,rec.logNPE/F/0.01)"
              indica que se deben seleccionar las columnas "rec.eventID/U/1"
              y "rec.logNPE/F/0.01".
-
              En caso de que exista algún error en la sintaxis del Query o
              de en el nombre de algún campo, se notifica de un error y el 
              programa termina.
