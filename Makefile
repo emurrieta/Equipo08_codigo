@@ -15,13 +15,19 @@ clean:
 	rm -rf resultados
 
 # Descarga el archivo de pruebas y lo descomprime
-download:
+download: 
 	curl -L -o data/bigSample.zip 'https://docs.google.com/uc?export=download&id=1pB67QdNKIygB1V9Mv2QqPaATN7cZJ-mF&confirm=no_antivirus'
-	unzip -f data/bigSample.zip
+	unzip -d data data/bigSample.zip
+
+data/reco_run010459_00001-00004.csv: download
+
 
 # Ejecuta el ejemplo basico
-demo:   HAWCquery.class 
+shortdemo:   HAWCquery.class 
 	java HAWCquery data/reco_run002054_00226_sample100.csv "select(rec.eventID/U/1,rec.coreX/F/0.1,rec.coreY/F/0.1,rec.logNPE/F/0.01)"
 
+bigdemo: HAWCquery.class data/reco_run010459_00001-00004.csv
+	java HAWCquery data/reco_run010459_00001-00004.csv "select(rec.eventID/U/1,rec.coreX/F/0.1,rec.coreY/F/0.1,rec.logNPE/F/0.01)"
+
 notebook: Postprocesamiento.ipynb
-	jupyter notebook --NotebookApp.token='' --NotebookApp.password='' Postprocesamiento.ipynb
+	jupyter notebook --NotebookApp.token='' --NotebookApp.password='' #Postprocesamiento.ipynb
